@@ -1,0 +1,221 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "title": "FGPV Config Schema",
+    "type": "object",
+    "version": 2.0,
+    "comments": "FIXME: when draft 05 is release redo schema inheritance with patching / merging if they are accepted",
+    "additionalProperties": false,
+
+    "definitions": {
+
+
+        "extent": {
+            "type": "object",
+            "properties": {
+                "xmin": { "type": "number" },
+                "ymin": { "type": "number" },
+                "xmax": { "type": "number" },
+                "ymax": { "type": "number" }
+            },
+            "required": [ "xmin", "ymin", "xmax", "ymax" ]
+        },
+      "symbolNode": {
+            "type": "object",
+            "properties": {
+                "label": { "type": "string", "description": "description" },
+                "icon": { "type": "string", "description": "Graphical symbol as a URL (data URLs are encouraged for smaller symbols)" }
+            },
+            "required": [ "label", "icon" ],
+            "additionalProperties": false
+        },
+        "basicLayer": {
+            "type": "object",
+            "properties": {
+                "id": { "type": "string", "description": "The id of the layer for referencing within the viewer (does not relate directly to any external service)" },
+                "name": { "type": "string", "description": "The display name of the layer.  If it is not present the viewer will make an attempt to scrape this information." },
+                "url": { "type": "string", "description": "The service endpoint of the layer.  It should match the type provided in layerType." },
+                "layerType": { "type": "string", "enum": [ "esriDynamic", "esriFeature", "esriImage", "esriTile", "ogcWms" ] },
+                "extent": { "$ref": "#/definitions/extentWithReferenceNode" }
+            },
+            "required": [ "id", "layerType", "url" ]
+        }
+
+
+
+
+    },
+
+    "properties": {
+        "version": { "type": "string", "enum": [ "2.0" ], "description": "The schema version used to validate the configuration file.  The schema should enumerate the list of versions accepted by this version of the viewer." },
+        "language": { "type": "string", "enum": [ "en", "fr", "es" ], "description": "ISO 639-1 code indicating the language of strings in the schema file" },
+
+        "ui": {
+            "description": "A set of service endpoints used by the viewer",
+            "type": "object",
+            "properties": {
+                "fullscreen": { "type": "boolean", "default": false, "description": "Indicates viewer takes up entire viewport" },
+                "theme": { "type": "string", "enum": [ "default" ], "default": "default", "description": "UI theme of the viewer" },
+                "logoUrl": { "type": "string", "description": "An optional image to be used in the place of the default viewer logo" },
+                "navBar": { "$ref": "#/definitions/navBarNode" },
+                "sideMenu": { "$ref": "#/definitions/sideMenuNode" },
+                "restrictNavigation": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Will restrict the user from panning beyond the maximum extent."
+                },
+                "about": {
+                    "description": "About properties from configuration file or Markdown folder",
+                    "oneOf": [
+                        { "type": "object", "properties": { "content": { "type": "string" } }, "required": ["content"], "additionalProperties": false },
+                        { "type": "object", "properties": { "folderName": { "type": "string" } }, "required": ["folderName"], "additionalProperties": false }
+                    ]
+                },
+                "help": {
+                    "type": "object",
+                    "description": "Help properties",
+                    "properties": {
+                        "folderName": { "type": "string", "default": "default", "description": "Help folder name who contain the help description and images" }
+                    },
+                    "required": [ "folderName" ],
+                    "additionalProperties": false
+                },
+                "legend": {
+                    "type": "object",
+                    "properties": {
+                        "reorderable": { "type": "boolean", "default": true, "description": "Specifies if the items in the legend can be reordered; structured legend ignores this property." },
+                        "allowImport": { "type": "boolean", "default": true, "description": "Specifies if the user-added layers are allowed." },
+                        "isOpen": {
+                            "type": "object",
+                            "description": "Specifies whether the legend is opened by default on initial loading of the map for small, medium, and large viewports",
+                            "properties": {
+                                "large": { "type": "boolean", "default": false, "description": "Whether the legend is opened by default on initial loading of the map for large viewports" },
+                                "medium": { "type": "boolean", "default": false, "description": "Whether the legend is opened by default on initial loading of the map for medium viewports" },
+                                "small": { "type": "boolean", "default": false, "description": "Whether the legend is opened by default on initial loading of the map for small viewports" }
+                            },
+                            "additionalProperties": false
+                        }
+                    },
+                    "additionalProperties": false
+                },
+                "filterIsOpen": {
+                    "type": "object",
+                    "description": "Specifies whether the filter panel is opened by default on initial loading of the map for small, medium, and large viewports",
+                    "properties": {
+                        "id": { "type": "string", "description": "The id of the layer for referencing within the viewer" },
+                        "large": { "type": "boolean", "default": false, "description": "Whether the filter panel is opened by default on initial loading of the map for large viewports" },
+                        "medium": { "type": "boolean", "default": false, "description": "Whether the filter panel is opened by default on initial loading of the map for medium viewports" },
+                        "small": { "type": "boolean", "default": false, "description": "Whether the filter panel is opened by default on initial loading of the map for small viewports" }
+                    },
+                    "additionalProperties": false,
+                    "required": ["id"]
+                },
+                "widgetsWidget": { "type": "object", "additionalProperties": true, "description": "FIXME" }
+            }
+        },
+
+        "services": {
+            "description": "A set of service endpoints used by the viewer",
+            "type": "object",
+            "properties": {
+                "proxyUrl": { "type": "string", "description": "An optional proxy to be used for dealing with same-origin issues.  URL must either be a relative path on the same server or an absolute path on a server which sets CORS headers." },
+                "exportMapUrl": { "type": "string", "description": "An ESRI service endpoint for generating map images.  Should point directly to an endpoint that can be consumed by ESRI PrintTask." },
+                "geometryUrl": { "type": "string", "description": "A URL to an ESRI ArcGIS geometry service REST endpoint." },
+                "googleAPIKey": { "type": "string", "description": "Google API key to enable geo location and share link shortening." },
+                "geolocation": { "type": "object", "additionalProperties": true, "description": "FIXME" },
+                "coordInfo": { "type": "object", "additionalProperties": true, "description": "FIXME" },
+                "print": { "type": "object", "additionalProperties": true, "description": "FIXME" },
+                "search": {
+                    "type": "object",
+                    "description": "Search properties including ability to disable certain types of searches (NTS, FSA, and/or LAT/LNG) and to set service endpoint urls",
+                    "properties": {
+                        "disabledSearches": {
+                            "type": "array",
+                            "items": { "type": "string", "enum": [ "NTS", "FSA", "LAT/LNG" ] },
+                            "minItems": 1,
+                            "uniqueItems": true,
+                            "description": "Disable specific types of searches including NTS, FSA, or LAT/LNG"
+                        },
+                        "serviceUrls": {
+                            "type": "object",
+                            "description": "Service endpoint urls",
+                            "properties": {
+                                "geoNames": { "type": "string", "description": "Endpoint url for geoNames service" },
+                                "geoLocation": { "type": "string", "description": "Endpoint url for geoLocation service" },
+                                "geoSuggest": { "type": "string", "description": "Endpoint url for geoSuggest service" },
+                                "provinces": { "type": "string", "description": "Endpoint url for provinces service" },
+                                "types": { "type": "string", "description": "Endpoint url for types service" }
+                            },
+                            "additionalProperties": false,
+                            "required": ["geoNames", "geoLocation", "geoSuggest", "provinces", "types"]
+                        }
+                    },
+                    "additionalProperties": false,
+                    "required": ["serviceUrls"]
+                },
+                "export": {
+                    "type": "object",
+                    "description": "Export properties",
+                    "properties": {
+                        "title": { "$ref": "#/definitions/exportComponent", "description": "Title of the export graphic." },
+                        "map": { "$ref": "#/definitions/exportComponent", "description": "Map component." },
+                        "mapElements": { "$ref": "#/definitions/exportComponent", "description": "North arrow and scalebar component." },
+                        "legend": { "$ref": "#/definitions/exportComponent", "description": "Legend component." },
+                        "footnote": { "$ref": "#/definitions/exportComponent", "description": "Foot notice to add to exported map" },
+                        "timestamp":  { "$ref": "#/definitions/exportComponent", "description": "Timestamp component." }
+                    },
+                    "additionalProperties": false
+                }
+            },
+            "additionalProperties": false,
+            "required": ["serviceUrls"]
+        },
+
+        "map": {
+            "type": "object",
+            "description": "Core map properties (extent sets, levels of detail)",
+            "properties": {
+                "extentSets": {
+                    "type": "array",
+                    "items": { "$ref": "#/definitions/extentSetNode" },
+                    "description": "The default, full and maximum extents of the map"
+                },
+                "lodSets": {
+                    "type": "array",
+                    "items": { "$ref": "#/definitions/lodSetNode" },
+                    "description": "The levels of detail (zoom scales) available for the map"
+                },
+                "tileSchemas": {
+                    "type": "array",
+                    "items": { "$ref": "#/definitions/tileSchemaNode" },
+                    "minItems": 1,
+                    "description": "A unique combination of an LoD and an extent set (each basemap must fit into a tile schema)"
+                },
+                "components": {
+                    "type": "object",
+                    "$ref": "#/definitions/mapComponentsNode"
+                },
+                "initialBasemapId": {
+                    "type": "string",
+                    "description": "Initial basemap to load. If not supplied viewer will select any basemap."
+                },
+                "baseMaps": {
+                    "type": "array",
+                    "items": { "$ref": "#/definitions/baseMapNode" },
+                    "minItems": 1,
+                    "description": "A list of basemaps to be made available via the basemap selector."
+                },
+                "layers": {
+                    "$ref": "#/definitions/layerList",
+                    "description": "Layer list in the order which they should be added to the map.  NOTE: ESRI JSAPI v3 cannot draw imagery layers over feature layers."
+                },
+                "legend": {
+                    "oneOf": [ { "$ref": "#/definitions/legendAuto" }, { "$ref": "#/definitions/legendStructured" } ],
+                    "description": "A structured or automatically generated legend"
+                }
+            },
+            "required": ["tileSchemas", "baseMaps"]
+        }
+    },
+
+    "required": [ "version" ]
+}

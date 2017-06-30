@@ -1,0 +1,45 @@
+{
+    "type": "object",
+    "description": "Core map properties (extent sets, levels of detail)",
+    "properties": {
+        "extentSets": {
+            "type": "array",
+            "items": { "$ref": "#/definitions/extentSetNode" },
+            "description": "The default, full and maximum extents of the map"
+        },
+        "lodSets": {
+            "type": "array",
+            "items": { "$ref": "#/definitions/lodSetNode" },
+            "description": "The levels of detail (zoom scales) available for the map"
+        },
+        "tileSchemas": {
+            "type": "array",
+            "items": { "$ref": "#/definitions/tileSchemaNode" },
+            "minItems": 1,
+            "description": "A unique combination of an LoD and an extent set (each basemap must fit into a tile schema)"
+        },
+        "components": {
+            "type": "object",
+            "$ref": "#/definitions/mapComponentsNode"
+        },
+        "initialBasemapId": {
+            "type": "string",
+            "description": "Initial basemap to load. If not supplied viewer will select any basemap."
+        },
+        "baseMaps": {
+            "type": "array",
+            "items": { "$ref": "#/definitions/baseMapNode" },
+            "minItems": 1,
+            "description": "A list of basemaps to be made available via the basemap selector."
+        },
+        "layers": {
+            "$ref": "#/definitions/layerList",
+            "description": "Layer list in the order which they should be added to the map.  NOTE: ESRI JSAPI v3 cannot draw imagery layers over feature layers."
+        },
+        "legend": {
+            "oneOf": [ { "$ref": "#/definitions/legendAuto" }, { "$ref": "#/definitions/legendStructured" } ],
+            "description": "A structured or automatically generated legend"
+        }
+    },
+    "required": ["tileSchemas", "baseMaps"]
+}

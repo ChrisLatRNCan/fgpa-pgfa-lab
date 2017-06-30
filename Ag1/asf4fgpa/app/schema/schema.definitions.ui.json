@@ -1,0 +1,32 @@
+{
+    "sideMenuNode": {
+        "type": "object",
+        "properties": {
+            "logo": { "type": "boolean", "default": true, "description": "Indicates if the logo should be shown in the left side menu." },
+            "items": { "type": "array", "items": { "$ref": "#/definitions/sideMenuButtons" }, "default": [] }
+        },
+        "additionalProperties": false,
+        "description": "Specifies which options are available in the left side menu."
+    },
+    "sideMenuButtons": {
+        "type": "array",
+        "uniqueItems": true,
+        "items": {
+            "type": "string",
+            "enum": ["layers", "basemap", "about", "fullscreen", "export", "share", "touch", "help", "language"]
+        }
+    },
+    "navBarNode": {
+        "type": "object",
+        "properties": {
+            "zoom": { "type": "string", "enum": ["all", "buttons", "slider"], "default": "buttons" },
+            "extra": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/definitions/navBarButtons" }, "default": [] }
+        },
+        "required": [ "zoom" ],
+        "additionalProperties": false
+    },
+    "navBarButtons": {
+        "type": "string",
+        "enum": ["geoLocator", "marquee", "home", "history", "basemap", "help", "fullscreen"]
+    }
+}

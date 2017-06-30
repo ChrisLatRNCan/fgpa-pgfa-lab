@@ -1,0 +1,63 @@
+{
+    "description": "A set of service endpoints used by the viewer",
+    "type": "object",
+    "properties": {
+        "fullscreen": { "type": "boolean", "default": false, "description": "Indicates viewer takes up entire viewport" },
+        "theme": { "type": "string", "enum": [ "default" ], "default": "default", "description": "UI theme of the viewer" },
+        "logoUrl": { "type": "string", "description": "An optional image to be used in the place of the default viewer logo" },
+        "navBar": { "$ref": "#/definitions/navBarNode" },
+        "sideMenu": { "$ref": "#/definitions/sideMenuNode" },
+        "restrictNavigation": {
+            "type": "boolean",
+            "default": false,
+            "description": "Will restrict the user from panning beyond the maximum extent."
+        },
+        "about": {
+            "description": "About properties from configuration file or Markdown folder",
+            "oneOf": [
+                { "type": "object", "properties": { "content": { "type": "string" } }, "required": ["content"], "additionalProperties": false },
+                { "type": "object", "properties": { "folderName": { "type": "string" } }, "required": ["folderName"], "additionalProperties": false }
+            ]
+        },
+        "help": {
+            "type": "object",
+            "description": "Help properties",
+            "properties": {
+                "folderName": { "type": "string", "default": "default", "description": "Help folder name who contain the help description and images" }
+            },
+            "required": [ "folderName" ],
+            "additionalProperties": false
+        },
+        "legend": {
+            "type": "object",
+            "properties": {
+                "reorderable": { "type": "boolean", "default": true, "description": "Specifies if the items in the legend can be reordered; structured legend ignores this property." },
+                "allowImport": { "type": "boolean", "default": true, "description": "Specifies if the user-added layers are allowed." },
+                "isOpen": {
+                    "type": "object",
+                    "description": "Specifies whether the legend is opened by default on initial loading of the map for small, medium, and large viewports",
+                    "properties": {
+                        "large": { "type": "boolean", "default": false, "description": "Whether the legend is opened by default on initial loading of the map for large viewports" },
+                        "medium": { "type": "boolean", "default": false, "description": "Whether the legend is opened by default on initial loading of the map for medium viewports" },
+                        "small": { "type": "boolean", "default": false, "description": "Whether the legend is opened by default on initial loading of the map for small viewports" }
+                    },
+                    "additionalProperties": false
+                }
+            },
+            "additionalProperties": false
+        },
+        "filterIsOpen": {
+            "type": "object",
+            "description": "Specifies whether the filter panel is opened by default on initial loading of the map for small, medium, and large viewports",
+            "properties": {
+                "id": { "type": "string", "description": "The id of the layer for referencing within the viewer" },
+                "large": { "type": "boolean", "default": false, "description": "Whether the filter panel is opened by default on initial loading of the map for large viewports" },
+                "medium": { "type": "boolean", "default": false, "description": "Whether the filter panel is opened by default on initial loading of the map for medium viewports" },
+                "small": { "type": "boolean", "default": false, "description": "Whether the filter panel is opened by default on initial loading of the map for small viewports" }
+            },
+            "additionalProperties": false,
+            "required": ["id"]
+        },
+        "widgetsWidget": { "type": "object", "additionalProperties": true, "description": "FIXME" }
+    }
+}

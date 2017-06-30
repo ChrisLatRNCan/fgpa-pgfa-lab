@@ -1,0 +1,23 @@
+{
+    "exportComponent": {
+        "type": "object",
+        "properties": {
+            "isSelected": {
+                "type": "boolean",
+                "default": true,
+                "description": "Indicates if the component is selected and included in the export graphic."
+            },
+            "isSelectable": {
+                "type": "boolean",
+                "default": true,
+                "description": "Indicates if the component can be included or excluded from the export graphic by the user."
+            },
+            "value": {
+                "type": "string",
+                "description": "Value to be passed to the generation function of this export component."
+            }
+        },
+        "description": "This is the initial configuration for an export component.",
+        "additionalProperties": false
+    }
+}
